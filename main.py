@@ -223,7 +223,6 @@ def main():
                 enemies.remove(enemy)
         player.move_lasers(-laser_vel, enemies)
 
-
 def main_menu():
     title_font = pg.font.SysFont("arial", 48)
     run = True
