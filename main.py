@@ -1,20 +1,9 @@
-import pygame as pg
 import random
+import pygame as pg
+from constants import *
 
 pg.font.init()
-Width, Height = 650, 650
-WIN = pg.display.set_mode((Width, Height))
 pg.display.set_caption("Space Invaders")
-
-YellowShip = pg.image.load("assets/yellow ship.png") # Player
-YellowLaser = pg.image.load("assets/yellow laser.png")
-RedShip = pg.image.load("assets/red ship.png")
-RedLaser = pg.image.load("assets/red laser.png")
-GreenShip = pg.image.load("assets/green ship.png")
-GreenLaser = pg.image.load("assets/green laser.png")
-BlueShip = pg.image.load("assets/blue ship.png")
-BlueLaser = pg.image.load("assets/blue laser.png")
-BG = pg.transform.scale(pg.image.load("assets/background.png"), (Width, Height))
 
 # Objects
 class Laser:
@@ -61,7 +50,7 @@ class Ship:
         self.coolDown()
         for laser in self.lasers:
             laser.move(vel)
-            if laser.off_screen(Height):
+            if laser.off_screen(HEIGHT):
                 self.lasers.remove(laser)
             elif laser.collision(obj):
                 obj.health -= 10
@@ -99,7 +88,7 @@ class Player(Ship):
         self.coolDown()
         for laser in self.lasers:
             laser.move(vel)
-            if laser.off_screen(Height):
+            if laser.off_screen(HEIGHT):
                 self.lasers.remove(laser)
             else:
                 for obj in objs:
@@ -141,16 +130,13 @@ class Enemy(Ship):
             self.lasers.append(laser)
             self.laserDelay = 1
 
-
 def collide(obj1: object, obj2: object) -> bool:
     offset_x = obj2.x - obj1.x
     offset_y = obj2.y - obj1.y
     return obj1.mask.overlap(obj2.mask, (offset_x, offset_y)) != None
 
-
 def main():
     run = True
-    FPS = 60
     level = 0
     lives = 3
     main_font = pg.font.SysFont("comicsans", 36)
@@ -170,13 +156,13 @@ def main():
         lives_label = main_font.render(f"Lives: {lives}", True, (255, 255, 255))
         level_label = main_font.render(f"Level: {level}", True, (255, 255, 255))
         WIN.blit(lives_label, (10, 10))
-        WIN.blit(level_label, (Width - level_label.get_width() - 10, 10))
+        WIN.blit(level_label, (WIDTH - level_label.get_width() - 10, 10))
         for enemy in enemies:
             enemy.draw(WIN)
         player.draw(WIN)
         if lost:
             lost_label = lost_font.render("You Lost!!", True, (255, 255, 255))
-            WIN.blit(lost_label, (Width / 2 - lost_label.get_width() / 2, 350))
+            WIN.blit(lost_label, (WIDTH / 2 - lost_label.get_width() / 2, 350))
         pg.display.update()
 
     while run:
@@ -196,7 +182,7 @@ def main():
             if player.health > 0:
                 player.health += 10
             for _ in range(wave_length):
-                enemy = Enemy(random.randrange(50, Width - 100), random.randrange(-1500, -100), random.choice(["red", "blue", "green"]))
+                enemy = Enemy(random.randrange(50, WIDTH - 100), random.randrange(-1500, -100), random.choice(["red", "blue", "green"]))
 
                 enemies.append(enemy)
 
@@ -206,7 +192,7 @@ def main():
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT] and player.x - player_vel > 0:
             player.x -= player_vel
-        if keys[pg.K_RIGHT] and player.x + player_vel + player.get_width() < Width:
+        if keys[pg.K_RIGHT] and player.x + player_vel + player.get_width() < WIDTH:
             player.x += player_vel
         if keys[pg.K_SPACE]:
             player.shoot()
@@ -218,7 +204,7 @@ def main():
             if collide(enemy, player):
                 player.health -= 10
                 enemies.remove(enemy)
-            elif enemy.y + enemy.get_height() > Height:
+            elif enemy.y + enemy.get_height() > HEIGHT:
                 lives -= 1
                 enemies.remove(enemy)
         player.move_lasers(-laser_vel, enemies)
@@ -229,7 +215,7 @@ def main_menu():
     while run:
         WIN.blit(BG, (0, 0))
         title_label = title_font.render("Press the mouse to begin...", True, (255, 255, 255))
-        WIN.blit(title_label, (Width/2 - title_label.get_width()/2, 350))
+        WIN.blit(title_label, (WIDTH/2 - title_label.get_width()/2, 350))
         pg.display.update()
         for event in pg.event.get():
             if event.type == pg.QUIT:
